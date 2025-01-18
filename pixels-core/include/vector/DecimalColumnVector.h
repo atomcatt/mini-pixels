@@ -29,6 +29,11 @@ class DecimalColumnVector : public ColumnVector {
     void * current() override;
 	int getPrecision();
 	int getScale();
+    void ensureSize(uint64_t size, bool preserveData);
+    void add(std::string &value) override;
+    void add(bool value) override;
+    void add(int64_t value) override;
+    void add(int value) override;
 };
 
 #endif // PIXELS_DECIMALCOLUMNVECTOR_H

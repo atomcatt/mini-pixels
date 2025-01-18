@@ -21,9 +21,12 @@
 //
 // Created by whz on 24-11-29.
 //
-//#include "writer/ColumnWriterBuilder.h"
+// #include "writer/ColumnWriterBuilder.h"
 #include "writer/ColumnWriterBuilder.h"
+#include "writer/DateColumnWriter.h"
+#include "writer/DecimalColumnWriter.h"
 #include "writer/IntegerColumnWriter.h"
+#include "writer/TimestampColumnWriter.h"
 
 std::shared_ptr<ColumnWriter> ColumnWriterBuilder::newColumnWriter(std::shared_ptr<TypeDescription> type, std::shared_ptr<PixelsWriterOption> writerOption) {
     switch(type->getCategory()) {
@@ -55,5 +58,3 @@ std::shared_ptr<ColumnWriter> ColumnWriterBuilder::newColumnWriter(std::shared_p
     }
     return std::shared_ptr<ColumnWriter>();
 }
-
-

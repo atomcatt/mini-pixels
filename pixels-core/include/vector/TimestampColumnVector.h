@@ -23,6 +23,12 @@ public:
     ~TimestampColumnVector();
     void print(int rowCount) override;
     void close() override;
+    void ensureSize(uint64_t size, bool preserveData);
+    void add(std::string &value) override;
+//    void add(bool value) override;
+    void add(int64_t value) override;
+    void add(int value) override;
+    long stringTimestampToMicros(const std::string &timestamp);
 private:
     bool isLong;
 };

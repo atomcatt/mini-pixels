@@ -3,6 +3,11 @@
 //
 
 #include "vector/DateColumnVector.h"
+#include <istream>
+#include <sstream>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
 
 DateColumnVector::DateColumnVector(uint64_t len, bool encoding): ColumnVector(len, encoding) {
 	if(encoding) {
@@ -57,4 +62,54 @@ void * DateColumnVector::current() {
     } else {
         return dates + readIndex;
     }
+}
+
+void DateColumnVector::ensureSize(uint64_t size, bool preserveData) {
+    ColumnVector::ensureSize(size, preserveData);
+    if (size <= length) {
+        return ;
+    }
+    int *oldTime = dates;
+    uint64_t oldLength = length;
+    dates = new int[size];
+    memoryUsage += sizeof(int) * size;
+    length = size;
+    if (preserveData) {
+        std::copy(oldTime, oldTime + oldLength, dates);
+    }
+}
+
+void DateColumnVector::add(std::string &value) {
+    if (writeIndex >= length) {
+        ensureSize(writeIndex * 2, true);
+    }
+    set(writeIndex++, stringDateToDay(value));
+}
+
+void DateColumnVector::add(bool value) {
+    add(value ? 1 : 0);
+}
+
+void DateColumnVector::add(int value) {
+    if (writeIndex >= length) {
+        ensureSize(writeIndex * 2, true);
+    }
+    set(writeIndex++, value);
+}
+
+int DateColumnVector::stringDateToDay(const std::string& date) {
+    std::tm tm = {};
+    std::istringstream ss(date);
+    ss >> std::get_time(&tm, "%Y-%m-%d");
+    if (ss.fail()) {
+        throw std::invalid_argument("Invalid date format: " + date);
+    }
+
+    std::time_t time = std::mktime(&tm);
+    if (time == -1) {
+        throw std::runtime_error("Failed to parse date: " + date);
+    }
+
+    auto seconds_since_epoch = std::chrono::system_clock::from_time_t(time).time_since_epoch();
+    return static_cast<int>((std::chrono::duration_cast<std::chrono::seconds>(seconds_since_epoch).count() + 28800) / 86400);
 }

@@ -24,7 +24,6 @@
 
 #ifndef DUCKDB_STRINGCOLUMNWRITER_H
 #define DUCKDB_STRINGCOLUMNWRITER_H
-
 #include "ColumnWriter.h"
 #include "utils/DynamicIntArray.h"
 #include "utils/EncodingUtils.h"
