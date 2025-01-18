@@ -5,3 +5,4 @@
 [submodule "pixels-duckdb"]
 	path = pixels-duckdb
 	url = git@github.com:pixelsdb/duckdb.git
+	branch = main
