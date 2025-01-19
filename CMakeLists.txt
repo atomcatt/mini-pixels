@@ -5,9 +5,13 @@ set(TARGET_NAME pixels)
 set(DCMAKE_EXPORT_COMPILE_COMMANDS=1)
 set(EXTENSION_NAME ${TARGET_NAME}_extension)
 project(${TARGET_NAME})
-
+set(BOOST_ROOT /data/wangyuanchun/kjz/boost)
+set(Boost_NO_SYSTEM_PATHS TRUE)
+find_package(Boost 1.87.0 REQUIRED program_options regex)
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${B00ST_R00T}/include)
+link_directories(${BOOST_ROOT}/lib)
 include_directories(include)
-
 set(ENV{PIXELS_SRC} ${CMAKE_CURRENT_SOURCE_DIR})
 set(ENV{PIXELS_HOME} ${CMAKE_CURRENT_SOURCE_DIR})
 set(EXTENSION_SOURCES

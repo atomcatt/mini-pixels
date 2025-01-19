@@ -60,15 +60,15 @@ set(BOOST_INCLUDE_DIR ${SOURCE_DIR})
 set(BOOST_LIBRARY_PREFIX ${SOURCE_DIR}/stage/lib/${CMAKE_STATIC_LIBRARY_PREFIX})
 # boost algorithm is a header only library, no need to add dependency
 # add boost program_options library
-add_library(Boost::program_options STATIC IMPORTED GLOBAL)
-set_property(TARGET Boost::program_options PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${BOOST_INCLUDE_DIR})
-set_property(TARGET Boost::program_options PROPERTY IMPORTED_LOCATION ${BOOST_LIBRARY_PREFIX}boost_program_options${CMAKE_STATIC_LIBRARY_SUFFIX})
-add_dependencies(Boost::program_options boost)
-# add boost regex library
-add_library(Boost::regex STATIC IMPORTED GLOBAL)
-set_property(TARGET Boost::regex PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${BOOST_INCLUDE_DIR})
-set_property(TARGET Boost::regex PROPERTY IMPORTED_LOCATION ${BOOST_LIBRARY_PREFIX}boost_regex${CMAKE_STATIC_LIBRARY_SUFFIX})
-add_dependencies(Boost::regex boost)
+# add_library(Boost::program_options STATIC IMPORTED GLOBAL)
+# set_property(TARGET Boost::program_options PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${BOOST_INCLUDE_DIR})
+# set_property(TARGET Boost::program_options PROPERTY IMPORTED_LOCATION ${BOOST_LIBRARY_PREFIX}boost_program_options${CMAKE_STATIC_LIBRARY_SUFFIX})
+# add_dependencies(Boost::program_options boost)
+# # add boost regex library
+# add_library(Boost::regex STATIC IMPORTED GLOBAL)
+# set_property(TARGET Boost::regex PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${BOOST_INCLUDE_DIR})
+# set_property(TARGET Boost::regex PROPERTY IMPORTED_LOCATION ${BOOST_LIBRARY_PREFIX}boost_regex${CMAKE_STATIC_LIBRARY_SUFFIX})
+# add_dependencies(Boost::regex boost)
 unset(SOURCE_DIR)
 
 set(pixels_cli_cxx

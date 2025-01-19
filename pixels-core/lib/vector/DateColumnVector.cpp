@@ -13,9 +13,10 @@ DateColumnVector::DateColumnVector(uint64_t len, bool encoding): ColumnVector(le
 	if(encoding) {
         posix_memalign(reinterpret_cast<void **>(&dates), 32,
                        len * sizeof(int32_t));
-	} else {
-		this->dates = nullptr;
-	}
+	} 
+    // else {
+	// 	this->dates = nullptr;
+	// }
 	memoryUsage += (long) sizeof(int) * len;
 }
 
@@ -50,9 +51,12 @@ DateColumnVector::~DateColumnVector() {
  */
 void DateColumnVector::set(int elementNum, int days) {
 	if(elementNum >= writeIndex) {
-		writeIndex = elementNum + 1;
+		this->writeIndex = elementNum + 1;
 	}
+    std::cout << "elementNum: " << elementNum << " " << "days: " << days << " " << "writeIndex: " << writeIndex << std::endl;
 	dates[elementNum] = days;
+    isNull[elementNum] = false;
+    std::cout << "End set" << std::endl;
 	// TODO: isNull
 }
 
@@ -71,6 +75,7 @@ void DateColumnVector::ensureSize(uint64_t size, bool preserveData) {
     }
     int *oldTime = dates;
     uint64_t oldLength = length;
+    posix_memalign(reinterpret_cast<void **>(&dates), 32, size * sizeof(int));
     dates = new int[size];
     memoryUsage += sizeof(int) * size;
     length = size;
@@ -80,10 +85,16 @@ void DateColumnVector::ensureSize(uint64_t size, bool preserveData) {
 }
 
 void DateColumnVector::add(std::string &value) {
+    std::cout << "In add (string)" << std::endl;
+    std::cout << "Value is: " << value << std::endl;
     if (writeIndex >= length) {
+        std::cout << __LINE__ << std::endl;
         ensureSize(writeIndex * 2, true);
+        std::cout << __LINE__ << std::endl;
     }
-    set(writeIndex++, stringDateToDay(value));
+    std::cout << __LINE__ << std::endl;
+    set(this->writeIndex++, stringDateToDay(value));
+    std::cout << __LINE__ << std::endl;
 }
 
 void DateColumnVector::add(bool value) {
@@ -91,10 +102,16 @@ void DateColumnVector::add(bool value) {
 }
 
 void DateColumnVector::add(int value) {
+    std::cout << "In add (int)" << std::endl;
+    std::cout << "Value is: " << value << std::endl;
     if (writeIndex >= length) {
+        std::cout << __LINE__ << std::endl;
         ensureSize(writeIndex * 2, true);
+        std::cout << __LINE__ << std::endl;
     }
-    set(writeIndex++, value);
+    std::cout << __LINE__ << std::endl;
+    set(this->writeIndex++, value);
+    std::cout << __LINE__ << std::endl;
 }
 
 int DateColumnVector::stringDateToDay(const std::string& date) {

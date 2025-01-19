@@ -337,11 +337,11 @@ std::shared_ptr<ColumnVector> TypeDescription::createColumn(int maxSize, std::ve
 	    case DATE:
 		    return std::make_shared<DateColumnVector>(maxSize, useEncodedVector.at(0));
 	    case DECIMAL: {
-		    if (precision <= SHORT_DECIMAL_MAX_PRECISION) {
+		    // if (precision <= SHORT_DECIMAL_MAX_PRECISION) {
 				return std::make_shared<DecimalColumnVector>(maxSize, precision, scale, useEncodedVector.at(0));
-		    } else {
-				throw InvalidArgumentException("Currently we didn't implement LongDecimalColumnVector.");
-		    }
+		    // } else {
+			// 	throw InvalidArgumentException("Currently we didn't implement LongDecimalColumnVector.");
+		    // }
 	    }
         case TIMESTAMP:
             return std::make_shared<TimestampColumnVector>(maxSize, 0, useEncodedVector.at(0));

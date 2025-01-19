@@ -8,6 +8,7 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <cmath>
 
 const long MICROS_PER_SEC = 1'000'000;
 
@@ -17,12 +18,12 @@ TimestampColumnVector::TimestampColumnVector(int precision, bool encoding): Colu
 
 TimestampColumnVector::TimestampColumnVector(uint64_t len, int precision, bool encoding): ColumnVector(len, encoding) {
     this->precision = precision;
-    if(encoding) {
+    // if(encoding) {
         posix_memalign(reinterpret_cast<void **>(&this->times), 64,
                        len * sizeof(long));
-    } else {
-        this->times = nullptr;
-    }
+    // } else {
+    //     this->times = nullptr;
+    // }
 }
 
 
@@ -110,23 +111,53 @@ void TimestampColumnVector::add(int value) {
     set(writeIndex++, value);
 }
 
-long TimestampColumnVector::stringTimestampToMicros(const std::string &timestamp) {
-    const std::string DATE_FORMAT = "%Y-%m-%d";
+// long TimestampColumnVector::stringTimestampToMicros(const std::string &timestamp) {
+//     const std::string DATE_FORMAT = "%Y-%m-%d";
+//     std::tm tm = {};
+//     std::istringstream ss(timestamp);
+//     ss >> std::get_time(&tm, DATE_FORMAT.c_str());
+//     if (ss.fail()) {
+//         throw std::runtime_error("Failed to parse timestamp");
+//     }
+
+//     tm.tm_hour = 0;
+//     tm.tm_min = 0;
+//     tm.tm_sec = 0;
+
+//     auto timeT = std::mktime(&tm);
+//     if (timeT == -1) {
+//         throw std::runtime_error("Invalid time_t value");
+//     }
+
+//     return static_cast<long>(timeT) * MICROS_PER_SEC;
+// }
+
+long TimestampColumnVector::stringTimestampToMicros(const std::string& timestamp) {
+    // 定义时间格式
+    const std::string SQL_LOCAL_DATE_TIME = "%Y-%m-%d %H:%M:%S"; 
+
     std::tm tm = {};
     std::istringstream ss(timestamp);
-    ss >> std::get_time(&tm, DATE_FORMAT.c_str());
+    ss >> std::get_time(&tm, SQL_LOCAL_DATE_TIME.c_str());
     if (ss.fail()) {
         throw std::runtime_error("Failed to parse timestamp");
     }
 
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
-    tm.tm_sec = 0;
-
+    // 将时间点转换为 time_t
     auto timeT = std::mktime(&tm);
-    if (timeT == -1) {
-        throw std::runtime_error("Invalid time_t value");
+
+    // 提取小数秒部分（假设在 . 之后）
+    size_t dotPos = timestamp.find('.');
+    int64_t fractionalMicros = 0;
+    if (dotPos != std::string::npos) {
+        std::string fractionalPart = timestamp.substr(dotPos + 1);
+        if (fractionalPart.length() > 6) {
+            fractionalPart = fractionalPart.substr(0, 6); // 只保留前 6 位
+        }
+        fractionalMicros = std::stoll(fractionalPart) * (MICROS_PER_SEC / std::pow(10, fractionalPart.length()));
     }
 
-    return static_cast<long>(timeT) * MICROS_PER_SEC;
+    // 计算微秒时间戳
+    long epochSeconds = static_cast<long>(timeT);
+    return epochSeconds * MICROS_PER_SEC + fractionalMicros;
 }
