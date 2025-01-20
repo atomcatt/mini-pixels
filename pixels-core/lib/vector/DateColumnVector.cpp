@@ -50,13 +50,12 @@ DateColumnVector::~DateColumnVector() {
      * @param days
  */
 void DateColumnVector::set(int elementNum, int days) {
+    std::cout << "In DateColumnVector::set" << std::endl;
 	if(elementNum >= writeIndex) {
 		this->writeIndex = elementNum + 1;
 	}
-    std::cout << "elementNum: " << elementNum << " " << "days: " << days << " " << "writeIndex: " << writeIndex << std::endl;
 	dates[elementNum] = days;
     isNull[elementNum] = false;
-    std::cout << "End set" << std::endl;
 	// TODO: isNull
 }
 
@@ -85,16 +84,11 @@ void DateColumnVector::ensureSize(uint64_t size, bool preserveData) {
 }
 
 void DateColumnVector::add(std::string &value) {
-    std::cout << "In add (string)" << std::endl;
-    std::cout << "Value is: " << value << std::endl;
+    std::cout << "In DateColumnVector::add(string)" << std::endl;
     if (writeIndex >= length) {
-        std::cout << __LINE__ << std::endl;
         ensureSize(writeIndex * 2, true);
-        std::cout << __LINE__ << std::endl;
     }
-    std::cout << __LINE__ << std::endl;
     set(this->writeIndex++, stringDateToDay(value));
-    std::cout << __LINE__ << std::endl;
 }
 
 void DateColumnVector::add(bool value) {
@@ -102,16 +96,11 @@ void DateColumnVector::add(bool value) {
 }
 
 void DateColumnVector::add(int value) {
-    std::cout << "In add (int)" << std::endl;
-    std::cout << "Value is: " << value << std::endl;
+    std::cout << "In DateColumnVector::add(int)" << std::endl;
     if (writeIndex >= length) {
-        std::cout << __LINE__ << std::endl;
         ensureSize(writeIndex * 2, true);
-        std::cout << __LINE__ << std::endl;
     }
-    std::cout << __LINE__ << std::endl;
     set(this->writeIndex++, value);
-    std::cout << __LINE__ << std::endl;
 }
 
 int DateColumnVector::stringDateToDay(const std::string& date) {

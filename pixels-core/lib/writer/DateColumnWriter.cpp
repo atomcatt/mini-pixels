@@ -29,6 +29,7 @@ DateColumnWriter::DateColumnWriter(std::shared_ptr <TypeDescription> type,
 }
 
 int DateColumnWriter::write(std::shared_ptr <ColumnVector> vector, int length) {
+    std::cout << "DateColumnWriter::write" << std::endl;
     std::shared_ptr<DateColumnVector> columnVector = std::static_pointer_cast<DateColumnVector>(vector);
     int *dates = columnVector->dates;
     int curPartLength;

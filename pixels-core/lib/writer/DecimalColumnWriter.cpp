@@ -34,42 +34,34 @@ int DecimalColumnWriter::write(std::shared_ptr<ColumnVector> vector,
   if (decimalColumnVector == nullptr) {
     throw std::runtime_error("Invalid ColumnVector type");
   }
-  std::cout << __LINE__ << std::endl;
   long *values = decimalColumnVector->vector;
   for (int i = 0; i < length; i++) {
     isNull[curPixelIsNullIndex] = decimalColumnVector->isNull[i];
     std::shared_ptr<ByteBuffer> curVecPartitionBuffer;
     curPixelEleIndex++;
-    std::cout << __LINE__ << std::endl;
     if (nullsPadding) {
       hasNull = true;
       switch (byteOrder) {
         case ByteOrder::PIXELS_LITTLE_ENDIAN:
           encodingUtils.writeLongLE(curVecPartitionBuffer, 0L);
-          std::cout << __LINE__ << std::endl;
           break;
         case ByteOrder::PIXELS_BIG_ENDIAN:
           encodingUtils.writeLongBE(curVecPartitionBuffer, 0L);
-          std::cout << __LINE__ << std::endl;
       }
     } else {
       hasNull = false;
       switch (byteOrder) {
         case ByteOrder::PIXELS_LITTLE_ENDIAN:
           encodingUtils.writeLongLE(outputStream, values[i]);
-          std::cout << __LINE__ << std::endl;
           break;
         case ByteOrder::PIXELS_BIG_ENDIAN:
           encodingUtils.writeLongBE(outputStream, values[i]);
-          std::cout << __LINE__ << std::endl;
       }
     }
     if (curPixelEleIndex >= pixelStride) {
       newPixel();
-      std::cout << __LINE__ << std::endl;
     }
   }
-  std::cout << "end write" << std::endl;
   return outputStream->getWritePos();
 }
 

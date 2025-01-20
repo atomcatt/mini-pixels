@@ -31,6 +31,19 @@
 class BinaryColumnVector : public ColumnVector {
 public:
   duckdb::string_t *vector;
+  uint8_t *buffer = nullptr;
+  uint8_t *smallBuffer = nullptr;
+  int *start;
+  int *lens;
+  int nextFree;
+  int smallBufferNextFree;
+
+  int bufferAllocationCount = 0;
+  int bufferSize = 0;
+  int smallBufferSize = 0;
+  int startLength = 0;
+  int lensLength = 0;
+  int len = 0;
 
   /**
    * Use this constructor by default. All column vectors
@@ -53,9 +66,18 @@ public:
   void close() override;
   void print(int rowCount) override;
 
-  void add(std::string value);
+  void ensureSize(uint64_t size, bool preserveData) override;
+
+  void add(std::string &value) override;
   void add(uint8_t *v, int length);
-  void setVal(int elemnetNum, uint8_t *sourceBuf);
+  void setVal(int elementNum, uint8_t *sourceBuf);
   void setVal(int elementNum, uint8_t *sourceBuf, int start, int length);
+  void reset() override;
+  void setValPreallocated(int elementNum, int length);
+
+  void resetBuffer();
+
+  void initBuffer(int estimatedValueSize);
+  void increaseBufferSpace(int nextElemLength);
 };
 #endif // PIXELS_BINARYCOLUMNVECTOR_H

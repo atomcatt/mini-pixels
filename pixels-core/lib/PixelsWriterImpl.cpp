@@ -61,7 +61,6 @@ bool PixelsWriterImpl::addRowBatch(std::shared_ptr<VectorizedRowBatch> rowBatch)
     curRowGroupDataLength=0;
     curRowGroupNumOfRows+=rowBatch->count();
     writeColumnVectors(rowBatch->cols,rowBatch->count());
-
     if(curRowGroupDataLength>=rowGroupSize){
         writeRowGroup();
         curRowGroupNumOfRows=0L;
@@ -72,6 +71,7 @@ bool PixelsWriterImpl::addRowBatch(std::shared_ptr<VectorizedRowBatch> rowBatch)
 
 void PixelsWriterImpl::writeColumnVectors(std::vector<std::shared_ptr<ColumnVector>>& columnVectors, int rowBatchSize)
 {
+    std::cout << "PixelsWriterImpl::writeColumnVectors" << std::endl;
     std::vector<std::future<void>> futures;
     std::atomic<int> dataLength(0);
     int commonColumnLength = columnVectors.size() ;

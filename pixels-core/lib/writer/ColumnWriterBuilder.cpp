@@ -27,6 +27,7 @@
 #include "writer/DecimalColumnWriter.h"
 #include "writer/IntegerColumnWriter.h"
 #include "writer/TimestampColumnWriter.h"
+#include "writer/StringColumnWriter.h"
 
 std::shared_ptr<ColumnWriter> ColumnWriterBuilder::newColumnWriter(std::shared_ptr<TypeDescription> type, std::shared_ptr<PixelsWriterOption> writerOption) {
     switch(type->getCategory()) {
@@ -44,7 +45,7 @@ std::shared_ptr<ColumnWriter> ColumnWriterBuilder::newColumnWriter(std::shared_p
         case TypeDescription::DOUBLE:
             break;
         case TypeDescription::STRING:
-            break;
+            return std::make_shared<StringColumnWriter>(type, writerOption);
         case TypeDescription::TIME:
             break;
         case TypeDescription::VARBINARY:

@@ -241,8 +241,9 @@ void PixelsScanFunction::TransformDuckdbType(const std::shared_ptr<TypeDescripti
 			case TypeDescription::DECIMAL:
 			    return_types.emplace_back(LogicalType::DECIMAL(columnType->getPrecision(), columnType->getScale()));
 			    break;
-			//        case TypeDescription::STRING:
-			//            break;
+			case TypeDescription::STRING:
+                return_types.emplace_back(LogicalType::VARCHAR);
+			    break;
 			case TypeDescription::DATE:
 			    return_types.emplace_back(LogicalType::DATE);
 			    break;
@@ -264,6 +265,7 @@ void PixelsScanFunction::TransformDuckdbType(const std::shared_ptr<TypeDescripti
 				//        case TypeDescription::STRUCT:
 				//            break;
 			default:
+                std::cout << "No match case" << std::endl;
 				throw InvalidArgumentException("bad column type in TransformDuckdbType: " + std::to_string(type->getCategory()));
 		}
 	}
@@ -332,8 +334,15 @@ void PixelsScanFunction::TransformDuckdbChunk(PixelsReadLocalState & data,
 			    break;
 		    }
 
-			//        case TypeDescription::STRING:
-			//            break;
+			case TypeDescription::STRING:{
+                auto binaryCol = std::static_pointer_cast<BinaryColumnVector>(col);
+                Vector vector(LogicalType::VARCHAR,
+                              (data_ptr_t)(binaryCol->current()), col->currentValid());
+                output.data.at(col_id).Reference(vector);
+                // auto result_ptr = FlatVector::GetData<duckdb::string_t>(output.data.at(col_id));
+                // memcpy(result_ptr, binaryCol->vector + row_offset, thisOutputChunkRows * sizeof(string_t));
+                break;
+            }
 			case TypeDescription::DATE:{
 			    auto dateCol = std::static_pointer_cast<DateColumnVector>(col);
                 Vector vector(LogicalType::DATE,
@@ -444,7 +453,6 @@ bool PixelsScanFunction::PixelsParallelStateNext(ClientContext &context, const P
                 ->setStorage(storage)
                 ->setPixelsFooterCache(footerCache)
                 ->build();
-
         PixelsReaderOption option = GetPixelsReaderOption(scan_data, parallel_state);
         scan_data.nextPixelsRecordReader = scan_data.nextReader->read(option);
         auto nextPixelsRecordReader = std::static_pointer_cast<PixelsRecordReaderImpl>(scan_data.nextPixelsRecordReader);

@@ -28,6 +28,7 @@ void StringColumnReader::read(std::shared_ptr<ByteBuffer> input, pixels::proto::
                               int size, int pixelStride, int vectorIndex, std::shared_ptr<ColumnVector> vector,
                               pixels::proto::ColumnChunkIndex & chunkIndex, std::shared_ptr<PixelsBitMask> filterMask) {
     // TODO: support dictionary
+    input->printAH();
     std::shared_ptr<BinaryColumnVector> columnVector =
             std::static_pointer_cast<BinaryColumnVector>(vector);
 

@@ -78,7 +78,6 @@ void PixelsConsumer::run() {
     std::string targetFilePath;
     std::shared_ptr<PixelsWriter> pixelsWriter(nullptr);
     int rowCounter = 0;
-
     int count = 0;
     for (std::string originalFilePath : queue) {
         if (!originalFilePath.empty()) {
@@ -107,7 +106,6 @@ void PixelsConsumer::run() {
 
                 ++rowBatch->rowCount;
                 ++rowCounter;
-
                 std::vector<std::string> colsInLine;
                 boost::sregex_token_iterator it(line.begin(), line.end(), boost::regex(regex), -1);
                 for (; it != boost::sregex_token_iterator(); ++it) {
@@ -120,7 +118,6 @@ void PixelsConsumer::run() {
                         columnVectors[i]->add(colsInLine[i]);
                     }
                 }
-
                 if (rowBatch->rowCount == rowBatch->getMaxSize()) {
                     std::cout << "writing row group to file: " << targetFilePath << " rowCount:"<<rowBatch->rowCount<<std::endl;
                     pixelsWriter->addRowBatch(rowBatch);
